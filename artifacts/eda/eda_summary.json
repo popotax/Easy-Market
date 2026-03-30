@@ -1,0 +1,26 @@
+{
+  "row_count": 56,
+  "site_counts": {
+    "Gamer Markt": 28,
+    "PlayerAuctions": 23,
+    "SkyCoach": 4,
+    "EloBoost24": 1
+  },
+  "price_stats": {
+    "count": 56.0,
+    "mean": 101.19410714285713,
+    "std": 188.9016891957467,
+    "min": 5.0,
+    "25%": 15.6025,
+    "50%": 35.55,
+    "75%": 113.5,
+    "max": 1253.5
+  },
+  "correlation_with_price": {
+    "total_trophies": 0.4580547883852972,
+    "avg_brawler_level": 0.24208148428145101,
+    "num_brawlers": 0.2361342839668494,
+    "rare_skins_count": -0.11596902916352048
+  },
+  "top_correlated_feature": "total_trophies"
+}

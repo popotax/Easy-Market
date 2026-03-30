@@ -1,0 +1,158 @@
+# Brawl Stars Account Price Predictor - Configuration
+
+# Web Scraping Configuration
+scraping:
+  # Timeout for requests (seconds)
+  request_timeout: 10
+  
+  # Delay between requests (seconds)
+  request_delay: 2
+  
+  # Maximum retry attempts
+  max_retries: 3
+  
+  # User agent for HTTP requests
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  
+  # Marketplace URLs
+  marketplaces:
+    skycoach:
+      url: "https://skycoach.gg/brawl-stars-boost/accounts"
+      name: "SkyCoach"
+      selector_price: ".price"  # CSS selector (to be refined during investigation)
+      selector_brawlers: ".brawlers-count"
+      selector_level: ".level"
+      selector_trophies: ".trophies"
+      selector_rarity: ".rarity-badge"
+    
+    playerauctions:
+      url: "https://www.playerauctions.com/brawl-stars-account/"
+      name: "PlayerAuctions"
+      selector_price: ".price-tag"
+      selector_brawlers: ".stat-brawlers"
+      selector_level: ".stat-level"
+      selector_trophies: ".stat-trophies"
+      selector_rarity: ".rarity"
+    
+    eloboost24:
+      url: "https://eloboost24.eu/es/marketplace?filter%5Bgame_type%5D=bs"
+      name: "EloBoost24"
+      selector_price: ".offer-price"
+      selector_brawlers: ".stat-brawlers"
+      selector_level: ".stat-level"
+      selector_trophies: ".stat-trophies"
+      selector_rarity: ".skin-rarity"
+    
+    gamermarkt:
+      url: "https://www.gamermarkt.com/listings/brawl-stars-account?srsltid=AfmBOop51BjpJp0YNndkhKcdkso-cQStpqfzVrrIZuSgWnUJ8Fmyl2la"
+      name: "Gamer Markt"
+      selector_price: ".listing-price"
+      selector_brawlers: ".attribute-brawlers"
+      selector_level: ".attribute-level"
+      selector_trophies: ".attribute-trophies"
+      selector_rarity: ".attribute-rarity"
+
+# Data Processing Configuration
+processing:
+  # Currency conversion (reference: USD)
+  base_currency: "USD"
+  
+  # Columns to extract from raw data
+  extracted_columns:
+    - price_original_currency
+    - currency
+    - num_brawlers
+    - avg_brawler_level
+    - total_trophies
+    - rare_skins_count
+    - legendary_skins_count
+    - mythic_skins_count
+    - epic_skins_count
+    - rare_skins_count_simple
+    - site_source
+    - date_scraped
+  
+  # Outlier detection
+  outlier_removal:
+    enabled: true
+    # Remove prices below min_price_usd
+    min_price_usd: 5
+    # Remove prices above max_price_usd
+    max_price_usd: 5000
+    # IQR multiplier for outlier detection
+    iqr_multiplier: 1.5
+
+# Machine Learning Configuration
+ml:
+  # Train/Test split ratio
+  test_split_ratio: 0.2
+  
+  # Random seed for reproducibility
+  random_state: 42
+  
+  # Feature scaling
+  scaling_method: "StandardScaler"
+  
+  # Models to train
+  models:
+    random_forest:
+      enabled: true
+      params:
+        n_estimators: 100
+        max_depth: 15
+        min_samples_split: 5
+        min_samples_leaf: 2
+        random_state: 42
+    
+    xgboost:
+      enabled: true
+      params:
+        n_estimators: 100
+        max_depth: 5
+        learning_rate: 0.1
+        subsample: 0.8
+        colsample_bytree: 0.8
+        random_state: 42
+    
+    lightgbm:
+      enabled: false
+      params:
+        n_estimators: 100
+        max_depth: 5
+        learning_rate: 0.1
+        random_state: 42
+  
+  # Evaluation metrics
+  evaluation:
+    metrics:
+      - mean_absolute_error
+      - mean_squared_error
+      - r2_score
+      - root_mean_squared_error
+    
+    # Minimum acceptable R² score
+    min_r2_score: 0.7
+
+# Output Configuration
+output:
+  # Where to save raw scraped data
+  raw_data_dir: "./data/raw"
+  
+  # Where to save processed data
+  processed_data_dir: "./data/processed"
+  
+  # Where to save trained models
+  models_dir: "./data/models"
+  
+  # Where to save artifacts (plots, reports)
+  artifacts_dir: "./artifacts"
+  
+  # CSV files naming convention
+  raw_csv_pattern: "{site}_{date}.csv"
+  processed_csv_name: "training_data.csv"
+  featured_csv_name: "features_engineered.csv"
+  
+  # Model file names
+  model_filename: "best_model.pkl"
+  scaler_filename: "scaler.pkl"
+  model_config_filename: "model_config.json"

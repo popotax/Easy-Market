@@ -1,0 +1,26 @@
+{
+  "best_model": "random_forest",
+  "best_metrics": {
+    "mae": 183.8980623247356,
+    "mse": 87526.9684654802,
+    "rmse": 295.8495706697581,
+    "r2": -13.778916160516168
+  },
+  "all_results": [
+    {
+      "name": "random_forest",
+      "metrics": {
+        "mae": 183.8980623247356,
+        "mse": 87526.9684654802,
+        "rmse": 295.8495706697581,
+        "r2": -13.778916160516168
+      }
+    }
+  ],
+  "split_info": {
+    "train_rows": 44,
+    "test_rows": 12,
+    "feature_count": 10,
+    "target": "price_usd"
+  }
+}

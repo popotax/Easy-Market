@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brawl Account Value Estimator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <div class="bg-shape shape-a"></div>
+    <div class="bg-shape shape-b"></div>
+
+    <main class="layout">
+      <section class="hero">
+        <p class="badge">BRAWL VALUE ENGINE</p>
+        <h1>Know your account value in seconds.</h1>
+        <p class="subtitle">
+          Paste your player tag, pull your public profile from Brawl Stars API, and get a live market estimate based on real marketplace behavior.
+        </p>
+      </section>
+
+      <section class="card">
+        <form method="post" class="form">
+          <label for="tag">Player Tag</label>
+          <div class="input-row">
+            <span>#</span>
+            <input
+              id="tag"
+              name="tag"
+              type="text"
+              placeholder="2PP"
+              value="{{ input_tag }}"
+              required
+            />
+          </div>
+          <button type="submit">Estimate Account Value</button>
+        </form>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if result %}
+        <section class="result">
+          <div class="result-header">
+            <h2>{{ result.name }}</h2>
+            <p>{{ result.tag }}</p>
+          </div>
+
+          <div class="value-panel">
+            <p class="value-label">Estimated Value</p>
+            <p class="value-main">${{ "%.2f"|format(result.estimated_value) }}</p>
+            <p class="value-range">Range: ${{ "%.2f"|format(result.range_low) }} - ${{ "%.2f"|format(result.range_high) }}</p>
+          </div>
+
+          <div class="stats-grid">
+            <article>
+              <p>Trophies</p>
+              <strong>{{ result.trophies }}</strong>
+            </article>
+            <article>
+              <p>Brawlers</p>
+              <strong>{{ result.num_brawlers }}</strong>
+            </article>
+            <article>
+              <p>Avg Power</p>
+              <strong>{{ result.avg_level }}</strong>
+            </article>
+            <article>
+              <p class="metric-with-tip">
+                Account Progress Score
+                <span class="info-tooltip" tabindex="0" aria-label="How Account Progress Score is calculated">
+                  !
+                  <span class="tooltip-text">
+                    Summary score of account completion. Calculated from each brawler's star powers + gadgets + gears, plus bonus points for power 10 and 11.
+                  </span>
+                </span>
+              </p>
+              <strong>{{ result.account_progress_score }}</strong>
+            </article>
+          </div>
+        </section>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
