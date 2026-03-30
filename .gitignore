@@ -8,6 +8,7 @@ ENV/
 data/raw/
 data/models/*.pkl
 data/models/*.joblib
+!data/models/best_model.pkl
 
 # Python
 __pycache__/
