@@ -1,3 +1,12 @@
+---
+title: Brawl Calculator
+emoji: "🎮"
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # Brawl-Data
 
 Proyecto para estimar el precio de cuentas de Brawl Stars con scraping, analisis de datos y regresion.
