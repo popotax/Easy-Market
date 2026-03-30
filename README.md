@@ -105,6 +105,29 @@ The app will:
 - Build model features from API data
 - Predict estimated value in USD and show a confidence range
 
+## Deploy gratis (Hugging Face Spaces)
+
+Puedes desplegar este backend gratis con Docker en Hugging Face Spaces.
+
+### Archivos listos para deploy
+- Dockerfile
+- requirements-web.txt
+- .dockerignore
+
+### Pasos
+1. Crea una cuenta en Hugging Face y entra a Spaces.
+2. Crea un Space nuevo con SDK = Docker.
+3. Conecta o sube este repositorio al Space.
+4. En Settings -> Variables and secrets agrega:
+	- BRAWL_API_TOKEN = tu token oficial de Brawl Stars API
+5. Espera el build y abre la URL publica del Space.
+
+### Comando de arranque en contenedor
+El contenedor arranca con:
+`gunicorn web.app:app --bind 0.0.0.0:${PORT}`
+
+Hugging Face asigna `PORT=7860` por defecto y el Dockerfile ya esta configurado para eso.
+
 ## Resultados actuales (2026-03-30)
 - Filas scrapeadas combinadas: 61
 - Filas limpias para entrenamiento: 56
