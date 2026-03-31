@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brawl Account Value Estimator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape shape-a"></div>
+    <div class="bg-shape shape-b"></div>
+
+    <main class="layout">
+      <section class="hero">
+        <p class="badge">BRAWL VALUE ENGINE</p>
+        <h1>Know your account value in seconds.</h1>
+        <p class="subtitle">
+          Paste your player tag and estimate account value using your local backend.
+        </p>
+      </section>
+
+      <section class="card">
+        <form id="estimate-form" class="form">
+          <label for="backendUrl">Backend URL</label>
+          <div class="input-row">
+            <input
+              id="backendUrl"
+              name="backendUrl"
+              type="url"
+              placeholder="https://your-backend-url"
+              required
+            />
+          </div>
+
+          <label for="tag">Player Tag</label>
+          <div class="input-row">
+            <span>#</span>
+            <input id="tag" name="tag" type="text" placeholder="2PP" required />
+          </div>
+
+          <button type="submit">Estimate Account Value</button>
+        </form>
+
+        <p class="hint">Tip: if your backend URL changes, update it here. It is saved in your browser.</p>
+
+        <div id="error" class="error hidden"></div>
+
+        <section id="result" class="result hidden">
+          <div class="result-header">
+            <h2 id="playerName"></h2>
+            <p id="playerTag"></p>
+          </div>
+
+          <div class="value-panel">
+            <p class="value-label">Estimated Value</p>
+            <p id="valueMain" class="value-main"></p>
+            <p id="valueRange" class="value-range"></p>
+          </div>
+
+          <div class="stats-grid">
+            <article>
+              <p>Trophies</p>
+              <strong id="statTrophies"></strong>
+            </article>
+            <article>
+              <p>Brawlers</p>
+              <strong id="statBrawlers"></strong>
+            </article>
+            <article>
+              <p>Avg Power</p>
+              <strong id="statAvg"></strong>
+            </article>
+            <article>
+              <p>Account Progress Score</p>
+              <strong id="statProgress"></strong>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -165,6 +165,35 @@ Si quieres evitar problemas de whitelist por IP con la API de Brawl, usa backend
 ### Health check
 La app expone `GET /healthz` para monitoreo y validacion de despliegue.
 
+## Deploy hibrido: Netlify (frontend) + tu computadora (backend)
+
+Este modo te permite publicar frontend gratis y ejecutar backend local cuando quieras.
+
+### Componentes
+- Frontend estatico: `netlify-frontend/`
+- Config Netlify: `netlify.toml`
+- Backend API local: `POST /api/estimate` en `web/app.py`
+
+### Flujo
+1. Subes `netlify-frontend/` a Netlify.
+2. En tu computadora corres el backend Flask.
+3. Expones tu backend con una URL publica temporal o fija (tunel o DNS+port-forwarding).
+4. Pegas esa URL en el campo `Backend URL` del frontend.
+
+### Backend local
+1. Activar entorno e instalar dependencias.
+2. Definir variables:
+	- `BRAWL_API_TOKEN`
+	- `ALLOWED_ORIGINS` (por ejemplo, tu dominio de Netlify)
+3. Iniciar servidor:
+	- `flask --app web/app.py run --host 0.0.0.0 --port 5001`
+
+### Ejemplo ALLOWED_ORIGINS
+`ALLOWED_ORIGINS=https://tu-sitio.netlify.app`
+
+### Nota importante
+Si tu backend corre en casa, la disponibilidad depende de que tu PC este encendida y el server activo.
+
 ## Resultados actuales (2026-03-30)
 - Filas scrapeadas combinadas: 61
 - Filas limpias para entrenamiento: 56
