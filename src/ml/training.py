@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.compose import TransformedTargetRegressor
 
 from src.ml.evaluation import regression_metrics
 from src.ml.models import build_random_forest, build_xgboost_or_none
@@ -31,10 +33,30 @@ def train_and_select_best(
         x, y, test_size=0.2, random_state=random_state
     )
 
-    candidates: list[tuple[str, object]] = [("random_forest", build_random_forest(random_state))]
+    candidates: list[tuple[str, object]] = [
+        (
+            "random_forest",
+            TransformedTargetRegressor(
+                regressor=build_random_forest(random_state),
+                func=np.log1p,
+                inverse_func=np.expm1,
+                check_inverse=False,
+            ),
+        )
+    ]
     xgb = build_xgboost_or_none(random_state)
     if xgb is not None:
-        candidates.append(("xgboost", xgb))
+        candidates.append(
+            (
+                "xgboost",
+                TransformedTargetRegressor(
+                    regressor=xgb,
+                    func=np.log1p,
+                    inverse_func=np.expm1,
+                    check_inverse=False,
+                ),
+            )
+        )
 
     results: list[TrainResult] = []
 

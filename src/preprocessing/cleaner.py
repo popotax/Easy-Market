@@ -43,10 +43,18 @@ class DataCleaner:
         self,
         min_price_usd: float = 5.0,
         max_price_usd: float = 5000.0,
+        max_trophies: int = 150000,
+        max_progress_per_brawler: int = 15,
+        high_brawler_threshold: int = 80,
+        min_trophies_for_high_brawlers: int = 2000,
         exchange_rates: dict[str, float] | None = None,
     ):
         self.min_price_usd = min_price_usd
         self.max_price_usd = max_price_usd
+        self.max_trophies = max_trophies
+        self.max_progress_per_brawler = max_progress_per_brawler
+        self.high_brawler_threshold = high_brawler_threshold
+        self.min_trophies_for_high_brawlers = min_trophies_for_high_brawlers
         self.exchange_rates = exchange_rates or DEFAULT_EXCHANGE_RATES
 
     def load_raw_files(self, paths: Iterable[Path]) -> pd.DataFrame:
@@ -105,6 +113,17 @@ class DataCleaner:
 
         out = self.normalize_currency(out)
 
+        # Apply hard sanity bounds before modeling. These remove parsing artifacts
+        # (for example, trophies at 1,000,000 or skin-like counters in the millions).
+        out["num_brawlers"] = out["num_brawlers"].clip(lower=1, upper=150)
+        out["total_trophies"] = out["total_trophies"].clip(lower=0, upper=self.max_trophies)
+
+        max_progress = (out["num_brawlers"].fillna(0) * self.max_progress_per_brawler).clip(lower=0)
+        out["rare_skins_count"] = out["rare_skins_count"].clip(lower=0)
+        out["rare_skins_count"] = out[["rare_skins_count"]].join(max_progress.rename("max_progress"))[
+            ["rare_skins_count", "max_progress"]
+        ].min(axis=1)
+
         # Drop rows with core missing values.
         core_cols = ["price_usd", "num_brawlers", "total_trophies", "site_source"]
         out = out.dropna(subset=core_cols)
@@ -126,10 +145,20 @@ class DataCleaner:
             (out["price_usd"] >= self.min_price_usd)
             & (out["price_usd"] <= self.max_price_usd)
             & (out["num_brawlers"] >= 1)
-            & (out["num_brawlers"] <= 200)
+            & (out["num_brawlers"] <= 150)
             & (out["avg_brawler_level"] >= 1)
             & (out["avg_brawler_level"] <= 11)
             & (out["total_trophies"] >= 0)
+            & (out["total_trophies"] <= self.max_trophies)
+        ]
+
+        # Remove impossible progression profiles likely caused by selector mismatches.
+        # Accounts with many brawlers almost never have near-zero trophies.
+        out = out[
+            ~(
+                (out["num_brawlers"] >= self.high_brawler_threshold)
+                & (out["total_trophies"] < self.min_trophies_for_high_brawlers)
+            )
         ]
         after_outlier_rows = len(out)
 
