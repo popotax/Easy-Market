@@ -13,7 +13,7 @@ const statAvg = document.getElementById("statAvg");
 const statProgress = document.getElementById("statProgress");
 
 // Fixed backend URL. Only the owner runs this backend when needed.
-const BACKEND_BASE_URL = "https://replace-with-your-backend-url";
+const BACKEND_BASE_URL = "http://192.168.0.102:5001";
 
 function showError(message) {
   errorBox.textContent = message;
