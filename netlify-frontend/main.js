@@ -42,7 +42,6 @@ form.addEventListener("submit", async (event) => {
   clearError();
   resultSection.classList.add("hidden");
 
-  const backendUrl = backendUrlInput.value.trim().replace(/\/$/, "");
   const tag = tagInput.value.trim();
 
   if (!tag) {
