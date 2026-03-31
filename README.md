@@ -167,7 +167,7 @@ La app expone `GET /healthz` para monitoreo y validacion de despliegue.
 
 ## Deploy hibrido: Netlify (frontend) + tu computadora (backend)
 
-Este modo te permite publicar frontend gratis y ejecutar backend local cuando quieras.
+Este modo publica el frontend siempre y usa un backend privado que solo el owner levanta cuando quiera.
 
 ### Componentes
 - Frontend estatico: `netlify-frontend/`
@@ -176,23 +176,17 @@ Este modo te permite publicar frontend gratis y ejecutar backend local cuando qu
 
 ### Flujo
 1. Subes `netlify-frontend/` a Netlify.
-2. En tu computadora corres el backend Flask.
-3. Expones tu backend con una URL publica temporal o fija (tunel o DNS+port-forwarding).
-4. Pegas esa URL en el campo `Backend URL` del frontend.
+2. Configuras una URL fija de backend en `netlify-frontend/main.js` (`BACKEND_BASE_URL`).
+3. En tu computadora levantas backend solo cuando quieras habilitar la app.
 
-### Backend local
-1. Activar entorno e instalar dependencias.
-2. Definir variables:
-	- `BRAWL_API_TOKEN`
-	- `ALLOWED_ORIGINS` (por ejemplo, tu dominio de Netlify)
-3. Iniciar servidor:
-	- `flask --app web/app.py run --host 0.0.0.0 --port 5001`
+### Backend local (un comando)
+`cd /Users/rubenguerrero/Desktop/Brawl-Data && source .venv/bin/activate && ALLOWED_ORIGINS=https://brawl-cacl.netlify.app BRAWL_API_TOKEN=TU_TOKEN flask --app web/app.py run --host 0.0.0.0 --port 5001`
 
 ### Ejemplo ALLOWED_ORIGINS
 `ALLOWED_ORIGINS=https://tu-sitio.netlify.app`
 
 ### Nota importante
-Si tu backend corre en casa, la disponibilidad depende de que tu PC este encendida y el server activo.
+Si tu backend corre en casa, la app en Netlify solo funcionara mientras tu PC este encendida y ese comando este corriendo.
 
 ## Resultados actuales (2026-03-30)
 - Filas scrapeadas combinadas: 61

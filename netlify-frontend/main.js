@@ -1,5 +1,4 @@
 const form = document.getElementById("estimate-form");
-const backendUrlInput = document.getElementById("backendUrl");
 const tagInput = document.getElementById("tag");
 const errorBox = document.getElementById("error");
 const resultSection = document.getElementById("result");
@@ -13,10 +12,8 @@ const statBrawlers = document.getElementById("statBrawlers");
 const statAvg = document.getElementById("statAvg");
 const statProgress = document.getElementById("statProgress");
 
-const savedBackendUrl = localStorage.getItem("brawl_backend_url") || "";
-if (savedBackendUrl) {
-  backendUrlInput.value = savedBackendUrl;
-}
+// Fixed backend URL. Only the owner runs this backend when needed.
+const BACKEND_BASE_URL = "https://replace-with-your-backend-url";
 
 function showError(message) {
   errorBox.textContent = message;
@@ -48,15 +45,18 @@ form.addEventListener("submit", async (event) => {
   const backendUrl = backendUrlInput.value.trim().replace(/\/$/, "");
   const tag = tagInput.value.trim();
 
-  if (!backendUrl || !tag) {
-    showError("Please set backend URL and player tag.");
+  if (!tag) {
+    showError("Please enter a player tag.");
     return;
   }
 
-  localStorage.setItem("brawl_backend_url", backendUrl);
+  if (BACKEND_BASE_URL.includes("replace-with-your-backend-url")) {
+    showError("Backend URL is not configured by the owner.");
+    return;
+  }
 
   try {
-    const resp = await fetch(`${backendUrl}/api/estimate`, {
+    const resp = await fetch(`${BACKEND_BASE_URL.replace(/\/$/, "")}/api/estimate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
