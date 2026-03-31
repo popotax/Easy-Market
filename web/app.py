@@ -32,6 +32,11 @@ def load_runtime() -> tuple[object, list[str]]:
     return MODEL, FEATURE_COLUMNS
 
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}, 200
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
@@ -73,7 +78,7 @@ def index():
                 if status == 404:
                     error = "Player tag not found. Check the tag and try again."
                 elif status == 403:
-                    error = "API token is invalid or does not have access."
+                    error = "Brawl API denied access (403). Check token and IP whitelist in Brawl Developers."
                 else:
                     error = f"Brawl API error ({status})."
             except Exception as exc:

@@ -8,7 +8,6 @@ ENV/
 data/raw/
 data/models/*.pkl
 data/models/*.joblib
-!data/models/best_model.pkl
 
 # Python
 __pycache__/
@@ -52,6 +51,7 @@ logs/
 # Environment variables
 .env
 .env.local
+.env.production
 
 # Cache
 .cache/

@@ -1,0 +1,13 @@
+# Replace with your domain or subdomain pointing to your VM static IP.
+api.example.com {
+    encode gzip
+
+    @health path /healthz
+    handle @health {
+        reverse_proxy brawl-api:8000
+    }
+
+    handle {
+        reverse_proxy brawl-api:8000
+    }
+}

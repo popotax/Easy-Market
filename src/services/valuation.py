@@ -9,7 +9,35 @@ from typing import Any
 import joblib
 import pandas as pd
 
+from src.ml.training import train_and_select_best
 from src.preprocessing.features import build_features
+from src.preprocessing.features import model_columns
+
+
+def train_artifacts_if_missing(root: Path) -> None:
+    processed_path = root / "data" / "processed" / "training_data.csv"
+    if not processed_path.exists():
+        raise FileNotFoundError("Missing training_data.csv; cannot auto-train model artifacts.")
+
+    df = pd.read_csv(processed_path)
+    if df.empty:
+        raise FileNotFoundError("training_data.csv is empty; cannot auto-train model artifacts.")
+
+    featured = build_features(df)
+    feature_cols = model_columns(featured)
+    best, _all_results, _split_info = train_and_select_best(
+        data=featured,
+        feature_cols=feature_cols,
+        target_col="price_usd",
+    )
+
+    models_dir = root / "data" / "models"
+    models_dir.mkdir(parents=True, exist_ok=True)
+
+    model_path = models_dir / "best_model.pkl"
+    columns_path = models_dir / "feature_columns.json"
+    joblib.dump(best.model, model_path)
+    columns_path.write_text(json.dumps(feature_cols, indent=2), encoding="utf-8")
 
 
 def load_model_artifacts(root: Path) -> tuple[Any, list[str]]:
@@ -17,7 +45,10 @@ def load_model_artifacts(root: Path) -> tuple[Any, list[str]]:
     columns_path = root / "data" / "models" / "feature_columns.json"
 
     if not model_path.exists() or not columns_path.exists():
-        raise FileNotFoundError("Model artifacts not found. Run scripts/03_train_model.py first.")
+        train_artifacts_if_missing(root)
+
+    if not model_path.exists() or not columns_path.exists():
+        raise FileNotFoundError("Model artifacts not found after auto-train fallback.")
 
     model = joblib.load(model_path)
     feature_columns = json.loads(columns_path.read_text(encoding="utf-8"))

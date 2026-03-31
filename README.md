@@ -137,6 +137,34 @@ El contenedor arranca con:
 
 Hugging Face asigna `PORT=7860` por defecto y el Dockerfile ya esta configurado para eso.
 
+## Deploy estable de produccion (IP fija)
+
+Si quieres evitar problemas de whitelist por IP con la API de Brawl, usa backend en VM con IP publica fija.
+
+### Arquitectura recomendada
+- Backend Flask en Oracle Cloud Always Free (VM) con IP reservada
+- Reverse proxy HTTPS con Caddy
+- Frontend opcional en hosting estatico (Cloudflare Pages/GitHub Pages)
+
+### Archivos de infraestructura
+- deploy/docker-compose.prod.yml
+- deploy/Caddyfile
+- .env.production.example
+- scripts/infra/bootstrap_oracle_vm.sh
+- scripts/infra/deploy_prod.sh
+
+### Pasos resumidos
+1. Crear VM en Oracle Always Free y reservar IP publica.
+2. Apuntar tu dominio/subdominio a esa IP.
+3. En la VM, clonar repo y ejecutar `scripts/infra/bootstrap_oracle_vm.sh`.
+4. Copiar `.env.production.example` a `.env.production` y definir `BRAWL_API_TOKEN`.
+5. Editar `deploy/Caddyfile` con tu dominio real.
+6. Ejecutar `scripts/infra/deploy_prod.sh`.
+7. Registrar la IP fija de la VM en Brawl Developers al crear la API key.
+
+### Health check
+La app expone `GET /healthz` para monitoreo y validacion de despliegue.
+
 ## Resultados actuales (2026-03-30)
 - Filas scrapeadas combinadas: 61
 - Filas limpias para entrenamiento: 56
