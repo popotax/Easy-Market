@@ -12,8 +12,10 @@ const statBrawlers = document.getElementById("statBrawlers");
 const statAvg = document.getElementById("statAvg");
 const statProgress = document.getElementById("statProgress");
 
-// Fixed backend URL. Only the owner runs this backend when needed.
-const BACKEND_BASE_URL = "https://arts-capable-resident-documents.trycloudflare.com";
+// Backend URL injected at build/runtime via global config.
+// Example in Netlify: window.__APP_CONFIG__ = { BACKEND_BASE_URL: "https://your-api.example.com" }
+const BACKEND_BASE_URL =
+  (window.__APP_CONFIG__ && window.__APP_CONFIG__.BACKEND_BASE_URL) || "";
 
 function showError(message) {
   errorBox.textContent = message;
@@ -49,7 +51,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (BACKEND_BASE_URL.includes("replace-with-your-backend-url")) {
+  if (!BACKEND_BASE_URL) {
     showError("Backend URL is not configured by the owner.");
     return;
   }

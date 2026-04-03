@@ -26,30 +26,31 @@ FEATURE_COLUMNS = None
 
 
 def _allowed_origins() -> list[str]:
-    raw = (os.getenv("ALLOWED_ORIGINS") or "*").strip()
-    if raw == "*":
-        return ["*"]
+    raw = (os.getenv("ALLOWED_ORIGINS") or "").strip()
+    if not raw:
+        return []
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
 def _cors_origin_for_request() -> str:
     origins = _allowed_origins()
-    if "*" in origins:
-        return "*"
+    if not origins:
+        return ""
 
     incoming = request.headers.get("Origin", "")
     if incoming and incoming in origins:
         return incoming
-
-    return origins[0] if origins else "*"
+    return ""
 
 
 @app.after_request
 def _apply_cors_headers(resp):
     origin = _cors_origin_for_request()
-    resp.headers["Access-Control-Allow-Origin"] = origin
-    resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    if origin:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        resp.headers["Vary"] = "Origin"
     return resp
 
 
@@ -120,8 +121,8 @@ def api_estimate():
                 403,
             )
         return jsonify({"ok": False, "error": f"Brawl API error ({status})"}), 502
-    except Exception as exc:
-        return jsonify({"ok": False, "error": f"Unexpected error: {exc}"}), 500
+    except Exception:
+        return jsonify({"ok": False, "error": "Unexpected backend error"}), 500
 
 
 @app.get("/")
@@ -135,4 +136,5 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    debug_mode = (os.getenv("FLASK_DEBUG") or "0") in {"1", "true", "True"}
+    app.run(debug=debug_mode, port=5001)
