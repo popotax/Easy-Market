@@ -99,11 +99,13 @@ This project now includes a web app where a user enters a player tag and gets an
 ### Setup token
 1. Copy `.env.example` to `.env`
 2. Set `BRAWL_API_TOKEN` with your official Brawl Stars API token
+3. Set `ALLOWED_ORIGINS` with your frontend origin(s) separated by commas
 
 ### Run the web app
 ```bash
 . .venv/bin/activate
-export BRAWL_API_TOKEN="your_token_here"
+cp .env.example .env
+source .env
 flask --app web/app.py run --debug --port 5001
 ```
 
@@ -125,7 +127,7 @@ Este modo publica el frontend siempre y usa un backend privado que solo el owner
 
 ### Flujo
 1. Subes `netlify-frontend/` a Netlify.
-2. Configuras una URL fija de backend en `netlify-frontend/main.js` (`BACKEND_BASE_URL`).
+2. Configuras `window.__APP_CONFIG__.BACKEND_BASE_URL` en el HTML deployado.
 3. En tu computadora levantas backend solo cuando quieras habilitar la app.
 
 ### Backend local (un comando)
@@ -137,26 +139,14 @@ Este modo publica el frontend siempre y usa un backend privado que solo el owner
 ### Nota importante
 Si tu backend corre en casa, la app en Netlify solo funcionara mientras tu PC este encendida y ese comando este corriendo.
 
-## Resultados actuales (2026-03-30)
-- Filas scrapeadas combinadas: 61
-- Filas limpias para entrenamiento: 56
-- Distribucion por sitio en dataset limpio:
-	- Gamer Markt: 28
-	- PlayerAuctions: 23
-	- SkyCoach: 4
-	- EloBoost24: 1
-- Mejor modelo actual: Random Forest
-- Metricas actuales:
-	- MAE: 41.10
-	- RMSE: 62.97
-	- R2: 0.33
+## Resultados actuales
+- Las metricas dependen de la fecha del scraping y del split/cross-validation.
+- Revisa siempre `data/models/model_config.json` despues de correr `python scripts/03_train_model.py`.
+- Recomendado: versionar snapshots por fecha para comparaciones estables.
 
-## Impacto de mejoras recomendadas
-- MAE: 43.84 -> 41.10 (mejora de 6.24%)
-- RMSE: 75.06 -> 62.97 (mejora de 16.11%)
-- R2: -6.32 -> 0.33 (salto de +6.65)
-
-El pipeline ahora generaliza mejor que la version inicial, aunque todavia hay margen para mejorar precision con selectores mas especificos por sitio.
+## Impacto de mejoras
+- Usa `python scripts/06_compare_metrics.py` para generar el reporte before/after en `data/models/model_improvement_report.md`.
+- Evita copiar metricas a mano en este README para no desalinear documentacion y artefactos.
 
 ## Proximos pasos
 1. Afinar selectores CSS por sitio para reducir ruido de texto residual.
@@ -171,8 +161,7 @@ El pipeline ahora generaliza mejor que la version inicial, aunque todavia hay ma
 - Reporte de mejora de modelo: data/models/model_improvement_report.md
 - Resumen EDA: artifacts/eda/eda_summary.md
 - Web app backend: web/app.py
-- Web app template: web/templates/index.html
-- Web app styles: web/static/styles.css
-
+- Frontend estatico: netlify-frontend/index.html
+- Frontend JS: netlify-frontend/main.js
 
 
